@@ -58,31 +58,31 @@ main() {
     if test -e /etc/arch-release; then
         # Going to try packer, pacman-color, pacman, pkgfile.
         if test -x /usr/bin/pacman; then
-            PKGMAN_ADD="/usr/bin/pacman -S $2"
-            PKGMAN_SEARCH="/usr/bin/pacman -Ss $2"
-            PKGMAN_DEL="/usr/bin/pacman -Rsu $2"
-            PKGMAN_OWNS="/usr/bin/pacman -Qo $2"
+            PKGMAN_ADD="/usr/bin/pacman -S $@"
+            PKGMAN_SEARCH="/usr/bin/pacman -Ss $@"
+            PKGMAN_DEL="/usr/bin/pacman -Rsu $@"
+            PKGMAN_OWNS="/usr/bin/pacman -Qo $@"
             PKGMAN_SYNC="/usr/bin/pacman -Sy"
             PKGMAN_UPDATE="/usr/bin/pacman -Su"
         fi
 
         if test -x /usr/bin/pacman-color; then
-            PKGMAN_ADD="/usr/bin/pacman-color -S $2"
-            PKGMAN_SEARCH="/usr/bin/pacman-color -Ss $2"
-            PKGMAN_DEL="/usr/bin/pacman-color -Rsu $2"
-            PKGMAN_OWNS="/usr/bin/pacman-color -Qo $2"
+            PKGMAN_ADD="/usr/bin/pacman-color -S $@"
+            PKGMAN_SEARCH="/usr/bin/pacman-color -Ss $@"
+            PKGMAN_DEL="/usr/bin/pacman-color -Rsu $@"
+            PKGMAN_OWNS="/usr/bin/pacman-color -Qo $@"
             PKGMAN_SYNC="/usr/bin/pacman-color -Sy"
             PKGMAN_UPDATE="/usr/bin/pacman-color -Su"
         fi
 
         if test -x /usr/bin/packer; then
-            PKGMAN_ADD="/usr/bin/packer -S $2"
-            PKGMAN_SEARCH="/usr/bin/packer -Ss $2"
+            PKGMAN_ADD="/usr/bin/packer -S $@"
+            PKGMAN_SEARCH="/usr/bin/packer -Ss $@"
             PKGMAN_UPDATE="/usr/bin/packer -Syu"
         fi
 
         if test -x /usr/bin/pkgfile; then
-            PKGMAN_PROVIDES="/usr/bin/pkgfile $2"
+            PKGMAN_PROVIDES="/usr/bin/pkgfile $@"
         fi
 
     elif test -e /etc/alpine-release; then
