@@ -1,7 +1,7 @@
 #!/bin/sh
 
 print_help() {
-    echo "usage: $0 [add|search|del|provides|owns|sync|update] <string>"
+    echo "usage: $0 [add|search|del|provides|owns|sync|update|list] <string>"
     exit
 }
 
@@ -11,6 +11,7 @@ check_arguments() {
             "$1" = "search" -o \
             "$1" = "del" -o \
             "$1" = "provides" -o \
+            "$1" = "list" -o \
             "$1" = "owns"; then
 
         # I have no idea why I cannot consolidate this. I should be able to.
@@ -27,8 +28,8 @@ check_arguments() {
         fi
     fi
 
-    # Either user passed $2 when he shouldn't have, he didn't pass $2
-    # when he should have, or he provided an action which isn't available.
+    # Either user passed $2 when he shouldn't have, didn't pass $2
+    # when he should have, or provided an action which isn't available.
     print_help
 
 }
@@ -54,6 +55,7 @@ main() {
     PKGMAN_OWNS=""
     PKGMAN_SYNC=""
     PKGMAN_UPDATE=""
+    PKGMAN_LIST=""
 
     if test -e /etc/arch-release; then
         # Going to try packer, pacman-color, pacman, pkgfile.
@@ -64,6 +66,7 @@ main() {
             PKGMAN_OWNS="/usr/bin/pacman -Qo $@"
             PKGMAN_SYNC="/usr/bin/pacman -Sy"
             PKGMAN_UPDATE="/usr/bin/pacman -Su"
+            PKGMAN_LIST="/usr/bin/pacman -Ql $@"
         fi
 
         if test -x /usr/bin/pacman-color; then
@@ -73,6 +76,7 @@ main() {
             PKGMAN_OWNS="/usr/bin/pacman-color -Qo $@"
             PKGMAN_SYNC="/usr/bin/pacman-color -Sy"
             PKGMAN_UPDATE="/usr/bin/pacman-color -Su"
+            PKGMAN_LIST="/usr/bin/pacman-color -Ql $@"
         fi
 
         if test -x /usr/bin/packer; then
