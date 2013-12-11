@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 print_help() {
     echo "usage: $0 [add|search|del|provides|owns|sync|update|list] <string>"
@@ -15,7 +15,7 @@ check_arguments() {
             "$1" = "owns"; then
 
         # I have no idea why I cannot consolidate this. I should be able to.
-        if test -n "$2"; then
+        if test -n "$2"; then 
             return
         fi
     fi
@@ -46,7 +46,10 @@ target() {
 
 main() {
     check_arguments $@
+    CMD_TARGET=$1
+    TARGET=$(target $1)
 
+    shift 1
 
     PKGMAN_ADD=""
     PKGMAN_SEARCH=""
@@ -57,57 +60,65 @@ main() {
     PKGMAN_UPDATE=""
     PKGMAN_LIST=""
 
-    if test -e /etc/arch-release; then
-        # Going to try packer, pacman-color, pacman, pkgfile.
-        if test -x /usr/bin/pacman; then
-            PKGMAN_ADD="/usr/bin/pacman -S $@"
-            PKGMAN_SEARCH="/usr/bin/pacman -Ss $@"
-            PKGMAN_DEL="/usr/bin/pacman -Rsu $@"
-            PKGMAN_OWNS="/usr/bin/pacman -Qo $@"
-            PKGMAN_SYNC="/usr/bin/pacman -Sy"
-            PKGMAN_UPDATE="/usr/bin/pacman -Su"
-            PKGMAN_LIST="/usr/bin/pacman -Ql $@"
-        fi
+    if test -x /usr/bin/apt-get; then
+        PKGMAN_ADD="/usr/bin/apt-get install $@"
+        PKGMAN_DEL="/usr/bin/apt-get remove $@"
+        PKGMAN_SYNC="/usr/bin/apt-get update $@"
+        PKGMAN_UPDATE="/usr/bin/apt-get upgrade $@"
+    fi
 
-        if test -x /usr/bin/pacman-color; then
-            PKGMAN_ADD="/usr/bin/pacman-color -S $@"
-            PKGMAN_SEARCH="/usr/bin/pacman-color -Ss $@"
-            PKGMAN_DEL="/usr/bin/pacman-color -Rsu $@"
-            PKGMAN_OWNS="/usr/bin/pacman-color -Qo $@"
-            PKGMAN_SYNC="/usr/bin/pacman-color -Sy"
-            PKGMAN_UPDATE="/usr/bin/pacman-color -Su"
-            PKGMAN_LIST="/usr/bin/pacman-color -Ql $@"
-        fi
+    if test -x /usr/bin/apt-cache; then
+        PKGMAN_SEARCH="/usr/bin/apt-cache search --names-only $@"
+    fi
 
-        if test -x /usr/bin/packer; then
-            PKGMAN_ADD="/usr/bin/packer -S $@"
-            PKGMAN_SEARCH="/usr/bin/packer -Ss $@"
-            PKGMAN_UPDATE="/usr/bin/packer -Syu"
-        fi
+    if test -x /usr/bin/pacman; then
+        PKGMAN_ADD="/usr/bin/pacman -S $@"
+        PKGMAN_SEARCH="/usr/bin/pacman -Ss $@"
+        PKGMAN_DEL="/usr/bin/pacman -Rsu $@"
+        PKGMAN_OWNS="/usr/bin/pacman -Qo $@"
+        PKGMAN_SYNC="/usr/bin/pacman -Sy"
+        PKGMAN_UPDATE="/usr/bin/pacman -Su"
+        PKGMAN_LIST="/usr/bin/pacman -Ql $@"
+    fi
 
-        if test -x /usr/bin/pkgfile; then
-            PKGMAN_PROVIDES="/usr/bin/pkgfile $@"
-        fi
+    if test -x /usr/bin/pacman-color; then
+        PKGMAN_ADD="/usr/bin/pacman-color -S $@"
+        PKGMAN_SEARCH="/usr/bin/pacman-color -Ss $@"
+        PKGMAN_DEL="/usr/bin/pacman-color -Rsu $@"
+        PKGMAN_OWNS="/usr/bin/pacman-color -Qo $@"
+        PKGMAN_SYNC="/usr/bin/pacman-color -Sy"
+        PKGMAN_UPDATE="/usr/bin/pacman-color -Su"
+        PKGMAN_LIST="/usr/bin/pacman-color -Ql $@"
+    fi
 
-    elif test -e /etc/alpine-release; then
+    if test -x /usr/bin/packer; then
+        PKGMAN_ADD="/usr/bin/packer -S $@"
+        PKGMAN_SEARCH="/usr/bin/packer -Ss $@"
+        PKGMAN_UPDATE="/usr/bin/packer -Syu"
+    fi
+
+    if test -x /usr/bin/pkgfile; then
+        PKGMAN_PROVIDES="/usr/bin/pkgfile $@"
+    fi
+
+    if test -e /etc/alpine-release; then
         # Going to try apk.
         echo "There is no support for Alpine Linux just yet. It'll be here soon!"
         exit
-    elif test -e /etc/gentoo-release; then
+    fi
+
+    if test -e /etc/gentoo-release; then
         # Going to try q, eix, emerge.
         echo "There is no support for Gentoo Linux just yet. It'll be here soon!"
         exit
-    else
-        echo "Could not identify your distribution, or your package manager."
-        exit
     fi
 
-    TARGET=$(target $1)
     if test -n "${!TARGET}"; then
+        echo ${!TARGET}
         ${!TARGET}
         return
     else
-        couldnt $1
+        couldnt $CMD_TARGET
     fi
 
 }
