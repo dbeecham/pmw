@@ -98,7 +98,7 @@ main() {
     fi
 
     if test -x /usr/bin/apt-file; then
-        PKGMAN_PROVIDES="/usr/bin/apt-file $@"
+        PKGMAN_PROVIDES="/usr/bin/apt-file search $@"
     fi
 
     if test -x /usr/bin/pkgfile; then
@@ -118,7 +118,6 @@ main() {
     fi
 
     if test -n "${!TARGET}"; then
-        echo ${!TARGET}
         ${!TARGET}
         return
     else
