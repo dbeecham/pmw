@@ -97,6 +97,10 @@ main() {
         PKGMAN_UPDATE="/usr/bin/packer -Syu"
     fi
 
+    if test -x /usr/bin/apt-file; then
+        PKGMAN_PROVIDES="/usr/bin/apt-file $@"
+    fi
+
     if test -x /usr/bin/pkgfile; then
         PKGMAN_PROVIDES="/usr/bin/pkgfile $@"
     fi
