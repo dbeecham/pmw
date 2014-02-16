@@ -71,6 +71,10 @@ main() {
         PKGMAN_SEARCH="/usr/bin/apt-cache search --names-only $@"
     fi
 
+    if test -x /usr/bin/dpkg-query; then
+        PKGMAN_LIST="/usr/bin/dpkg-query -L $@"
+    fi
+
     if test -x /usr/bin/pacman; then
         PKGMAN_ADD="/usr/bin/pacman -S $@"
         PKGMAN_SEARCH="/usr/bin/pacman -Ss $@"
@@ -103,18 +107,6 @@ main() {
 
     if test -x /usr/bin/pkgfile; then
         PKGMAN_PROVIDES="/usr/bin/pkgfile $@"
-    fi
-
-    if test -e /etc/alpine-release; then
-        # Going to try apk.
-        echo "There is no support for Alpine Linux just yet. It'll be here soon!"
-        exit
-    fi
-
-    if test -e /etc/gentoo-release; then
-        # Going to try q, eix, emerge.
-        echo "There is no support for Gentoo Linux just yet. It'll be here soon!"
-        exit
     fi
 
     if test -n "${!TARGET}"; then
